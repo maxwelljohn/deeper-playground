@@ -361,15 +361,20 @@ export function backProp(network: Node[][], target: number,
  */
 export function updateWeights(network: Node[][], learningRate: number,
     regularizationRate: number) {
-  for (let layerIdx = 1; layerIdx < network.length; layerIdx++) {
-    let currentLayer = network[layerIdx];
+  function updateLayerWeights(currentLayer: Node[], dryRun: boolean, layerLearningRate: number) {
     for (let i = 0; i < currentLayer.length; i++) {
       let node = currentLayer[i];
+      let layerGradient: number[] = [];
       // Update the node's bias.
       if (node.numAccumulatedDers > 0) {
-        node.bias -= learningRate * node.accInputDer / node.numAccumulatedDers;
-        node.accInputDer = 0;
-        node.numAccumulatedDers = 0;
+        let partial = node.accInputDer / node.numAccumulatedDers;
+        if (dryRun) {
+          layerGradient.push(partial);
+        } else {
+          node.bias -= layerLearningRate * partial;
+          node.accInputDer = 0;
+          node.numAccumulatedDers = 0;
+        }
       }
       // Update the weights coming into this node.
       for (let j = 0; j < node.inputLinks.length; j++) {
@@ -380,25 +385,44 @@ export function updateWeights(network: Node[][], learningRate: number,
         let regulDer = link.regularization ?
             link.regularization.der(link.weight) : 0;
         if (link.numAccumulatedDers > 0) {
-          // Update the weight based on dE/dw.
-          link.weight = link.weight -
-              (learningRate / link.numAccumulatedDers) * link.accErrorDer;
-          // Further update the weight based on regularization.
-          let newLinkWeight = link.weight -
-              (learningRate * regularizationRate) * regulDer;
-          if (link.regularization === RegularizationFunction.L1 &&
-              link.weight * newLinkWeight < 0) {
-            // The weight crossed 0 due to the regularization term. Set it to 0.
-            link.weight = 0;
-            link.isDead = true;
+          if (dryRun) {
+            let partial = link.accErrorDer / link.numAccumulatedDers + regularizationRate * regulDer;
+            layerGradient.push(partial);
           } else {
-            link.weight = newLinkWeight;
+            // Update the weight based on dE/dw.
+            link.weight = link.weight -
+                (layerLearningRate / link.numAccumulatedDers) * link.accErrorDer;
+            // Further update the weight based on regularization.
+            let newLinkWeight = link.weight -
+                (layerLearningRate * regularizationRate) * regulDer;
+            if (link.regularization === RegularizationFunction.L1 &&
+                link.weight * newLinkWeight < 0) {
+              // The weight crossed 0 due to the regularization term. Set it to 0.
+              link.weight = 0;
+              link.isDead = true;
+            } else {
+              link.weight = newLinkWeight;
+            }
+            link.accErrorDer = 0;
+            link.numAccumulatedDers = 0;
           }
-          link.accErrorDer = 0;
-          link.numAccumulatedDers = 0;
         }
       }
+      if (dryRun) {
+        return layerGradient;
+      }
     }
+  }
+  for (let layerIdx = 1; layerIdx < network.length; layerIdx++) {
+    let currentLayer = network[layerIdx];
+    let layerGradient = updateLayerWeights(currentLayer, true, 0);
+    let layerGradientNorm = layerGradient.map(function square(x: number) {
+      return x * x;
+    }).reduce(function sum(x: number, y: number) {
+      return x + y;
+    }) ** (1/2);
+    let layerLearningRate = layerGradientNorm == 0 ? 0 : (learningRate / layerGradientNorm);
+    updateLayerWeights(currentLayer, false, layerLearningRate);
   }
 }
 
