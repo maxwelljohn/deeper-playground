@@ -432,6 +432,13 @@ function makeGUI() {
 function updateBiasesUI(network: nn.Node[][]) {
   nn.forEachNode(network, true, node => {
     d3.select(`rect#bias-${node.id}`).style("fill", colorScale(node.bias));
+    let active = Math.random() < 0.5;
+    let nodeGroup = d3.select(`#node${node.id}`);
+    nodeGroup.classed("active", active);
+    nodeGroup.classed("inactive", !active);
+    let div = d3.select(`#canvas-${node.id}`);
+    div.classed("active", active);
+    div.classed("inactive", !active);
   });
 }
 
