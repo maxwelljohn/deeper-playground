@@ -94,6 +94,7 @@ class Player {
   private timerIndex = 0;
   private isPlaying = false;
   private callback: (isPlaying: boolean) => void = null;
+  private timerCount = 0;
 
   /** Plays/pauses the player. */
   playOrPause() {
@@ -135,7 +136,10 @@ class Player {
       if (localTimerIndex < this.timerIndex) {
         return true;  // Done.
       }
-      oneStep();
+      if (this.timerCount % 10 == 0) {
+        oneStep();
+      }
+      this.timerCount++;
       return false;  // Not done.
     }, 0);
   }
