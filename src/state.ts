@@ -131,7 +131,8 @@ export class State {
     {name: "problem", type: Type.OBJECT, keyMap: problems},
     {name: "initZero", type: Type.BOOLEAN},
     {name: "hideText", type: Type.BOOLEAN},
-    {name: "learningRateAutotuning", type: Type.NUMBER}
+    {name: "learningRateAutotuning", type: Type.NUMBER},
+    {name: "preventLossIncreases", type: Type.BOOLEAN}
   ];
 
   [key: string]: any;
@@ -165,6 +166,7 @@ export class State {
   regDataset: dataset.DataGenerator = dataset.regressPlane;
   seed: string;
   learningRateAutotuning = -1;
+  preventLossIncreases = false;
 
   /**
    * Deserializes the state from the url hash.

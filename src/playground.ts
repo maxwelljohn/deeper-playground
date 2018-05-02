@@ -169,6 +169,7 @@ let iter = 0;
 let trainData: Example2D[] = [];
 let testData: Example2D[] = [];
 let network: nn.Node[][] = null;
+let prevNetwork: nn.Node[][] = null;
 let lossTrain = 0;
 let lossTest = 0;
 let newLossTrain = 0;
@@ -375,6 +376,22 @@ function makeGUI() {
     userHasInteracted();
     parametersChanged = true;
   });
+
+  let preventLossIncreases = d3.select("#preventLossIncreases").on("change", function() {
+    state.preventLossIncreases = this.value == 'true';
+    if (state.preventLossIncreases && state.learningRateAutotuning == -1) {
+      // Nice to have some autotuning in this case...
+      // Otherwise the learning rate can go down but never up.
+      state.learningRateAutotuning = 0.0001;
+      learningRateAutotuning.property("value", 0.0001);
+    }
+    state.serialize();
+    userHasInteracted();
+    parametersChanged = true;
+  });
+  preventLossIncreases.property("value", state.preventLossIncreases);
+  // By putting this down here, we can correctly deserialize states with
+  // preventLossIncreases == true && learningRateAutotuning == -1
   learningRateAutotuning.property("value", state.learningRateAutotuning);
 
   // Add scale to the gradient color map.
@@ -945,11 +962,23 @@ function softmaxSelectLearningRate(): void {
     selectedLearningRate = possibleLearningRates.pop();
   }
   state.learningRate = selectedLearningRate;
+  state.serialize();
   d3.select("#learningRate").property("value", state.learningRate);
 }
 
-function oneStep(): void {
-  iter++;
+function shiftLearningRate(indexDelta: number): void {
+  let currentIndex: number = learningRates.indexOf(state.learningRate);
+  let newIndex: number = currentIndex + indexDelta;
+  state.learningRate = learningRates[newIndex];
+  state.serialize();
+  d3.select("#learningRate").property("value", state.learningRate);
+}
+
+function oneStep(prevNetwork?: nn.Node[][]): void {
+  if (!prevNetwork) {
+    prevNetwork = _.cloneDeep(network);
+    iter++;
+  }
   trainData.forEach((point, i) => {
     let input = constructInput(point.x, point.y);
     nn.forwardProp(network, input);
@@ -962,7 +991,14 @@ function oneStep(): void {
   newLossTrain = getLoss(network, trainData);
   learningRateScoreSums[state.learningRate] += (lossTrain - newLossTrain) /
     lossTrain;
-  if (state.learningRateAutotuning != -1) {
+  if (state.preventLossIncreases && newLossTrain > lossTrain) {
+    if (state.learningRate > learningRates[0]) {
+      network = _.cloneDeep(prevNetwork);
+      shiftLearningRate(-1);
+      oneStep(prevNetwork);
+      return;
+    }
+  } else if (state.learningRateAutotuning != -1) {
     softmaxSelectLearningRate();
   }
 
