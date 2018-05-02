@@ -378,8 +378,8 @@ function makeGUI() {
   });
 
   let preventLossIncreases = d3.select("#preventLossIncreases").on("change", function() {
-    state.preventLossIncreases = this.value == 'true';
-    if (state.preventLossIncreases && state.learningRateAutotuning == -1) {
+    state.preventLossIncreases = this.value === 'true';
+    if (state.preventLossIncreases && state.learningRateAutotuning === -1) {
       // Nice to have some autotuning in this case...
       // Otherwise the learning rate can go down but never up.
       state.learningRateAutotuning = 0.0001;
@@ -391,7 +391,7 @@ function makeGUI() {
   });
   preventLossIncreases.property("value", state.preventLossIncreases);
   // By putting this down here, we can correctly deserialize states with
-  // preventLossIncreases == true && learningRateAutotuning == -1
+  // preventLossIncreases === true && learningRateAutotuning === -1
   learningRateAutotuning.property("value", state.learningRateAutotuning);
 
   // Add scale to the gradient color map.
@@ -998,7 +998,7 @@ function oneStep(prevNetwork?: nn.Node[][]): void {
       oneStep(prevNetwork);
       return;
     }
-  } else if (state.learningRateAutotuning != -1) {
+  } else if (state.learningRateAutotuning !== -1) {
     softmaxSelectLearningRate();
   }
 
