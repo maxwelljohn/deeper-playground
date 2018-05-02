@@ -157,12 +157,16 @@ limitations under the License.
           </select>
         </div>
       </div>
-      <div class="control ui-animationSpeed">
-        <label for="animationSpeed">Automatically adjust<br/>learning rate</label>
+      <div class="control ui-learningRateAutotuning">
+        <label for="learningRateAutotuning"><a href="#">Learning rate autotuning</a></label>
         <div class="select">
-          <select id="animationSpeed">
-            <option value="Yes">Yes</option>
-            <option value="No">No</option>
+          <select id="learningRateAutotuning">
+            <option value="-1">None</option>
+            <option value="0.0001">0.0001</option>
+            <option value="0.001">0.001</option>
+            <option value="0.01">0.01</option>
+            <option value="0.1">0.1</option>
+            <option value="1">1</option>
           </select>
         </div>
       </div>

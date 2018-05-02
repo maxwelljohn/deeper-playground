@@ -130,7 +130,8 @@ export class State {
     {name: "tutorial", type: Type.STRING},
     {name: "problem", type: Type.OBJECT, keyMap: problems},
     {name: "initZero", type: Type.BOOLEAN},
-    {name: "hideText", type: Type.BOOLEAN}
+    {name: "hideText", type: Type.BOOLEAN},
+    {name: "learningRateAutotuning", type: Type.NUMBER}
   ];
 
   [key: string]: any;
@@ -163,6 +164,7 @@ export class State {
   dataset: dataset.DataGenerator = dataset.classifyCircleData;
   regDataset: dataset.DataGenerator = dataset.regressPlane;
   seed: string;
+  learningRateAutotuning = -1;
 
   /**
    * Deserializes the state from the url hash.

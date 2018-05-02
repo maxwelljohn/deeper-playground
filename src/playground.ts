@@ -369,6 +369,14 @@ function makeGUI() {
   });
   problem.property("value", getKeyFromValue(problems, state.problem));
 
+  let learningRateAutotuning = d3.select("#learningRateAutotuning").on("change", function() {
+    state.learningRateAutotuning = +this.value;
+    state.serialize();
+    userHasInteracted();
+    parametersChanged = true;
+  });
+  learningRateAutotuning.property("value", state.learningRateAutotuning);
+
   // Add scale to the gradient color map.
   let x = d3.scale.linear().domain([-1, 1]).range([0, 144]);
   let xAxis = d3.svg.axis()
@@ -913,8 +921,6 @@ function constructInput(x: number, y: number): number[] {
   return input;
 }
 
-let TAU: number = 1/100;
-
 function softmaxSelectLearningRate(): void {
   let possibleLearningRates: number[] = [state.learningRate];
   let currentIndex: number = learningRates.indexOf(state.learningRate);
@@ -929,7 +935,7 @@ function softmaxSelectLearningRate(): void {
   let selectionOdds: number[] = [];
   for (let learningRate of possibleLearningRates) {
     selectionOdds.push(Math.E ** ((learningRateScoreSums[learningRate] /
-      learningRateScoreCounts[learningRate]) / TAU));
+      learningRateScoreCounts[learningRate]) / state.learningRateAutotuning));
   }
 
   let selectedPoint: number = Math.random() * _.sum(selectionOdds);
@@ -956,7 +962,9 @@ function oneStep(): void {
   newLossTrain = getLoss(network, trainData);
   learningRateScoreSums[state.learningRate] += (lossTrain - newLossTrain) /
     lossTrain;
-  softmaxSelectLearningRate();
+  if (state.learningRateAutotuning != -1) {
+    softmaxSelectLearningRate();
+  }
 
   lossTrain = newLossTrain;
   lossTest = getLoss(network, testData);
