@@ -27,6 +27,7 @@ import {
 } from "./state";
 import {Example2D, shuffle} from "./dataset";
 import {AppendingLineChart} from "./linechart";
+import _ = require('lodash');
 
 let mainWidth;
 
@@ -170,9 +171,16 @@ let testData: Example2D[] = [];
 let network: nn.Node[][] = null;
 let lossTrain = 0;
 let lossTest = 0;
+let newLossTrain = 0;
 let player = new Player();
 let lineChart = new AppendingLineChart(d3.select("#linechart"),
     ["#777", "black"]);
+
+let learningRates: number[] = d3.selectAll('#learningRate > option')[0].map((opt) => {
+  return +d3.select(opt).attr('value');
+});
+let learningRateScoreCounts = {};
+let learningRateScoreSums = {};
 
 function makeGUI() {
   d3.select("#reset-button").on("click", () => {
@@ -905,6 +913,35 @@ function constructInput(x: number, y: number): number[] {
   return input;
 }
 
+let TAU: number = 1/100;
+
+function softmaxSelectLearningRate(): void {
+  let possibleLearningRates: number[] = [state.learningRate];
+  let currentIndex: number = learningRates.indexOf(state.learningRate);
+  let indexDeltas: number[] = [-1, 1];
+  for (let indexDelta of indexDeltas) {
+    let newIndex: number = currentIndex + indexDelta;
+    if (0 <= newIndex && newIndex < learningRates.length) {
+      possibleLearningRates.push(learningRates[newIndex]);
+    }
+  }
+
+  let selectionOdds: number[] = [];
+  for (let learningRate of possibleLearningRates) {
+    selectionOdds.push(Math.E ** ((learningRateScoreSums[learningRate] /
+      learningRateScoreCounts[learningRate]) / TAU));
+  }
+
+  let selectedPoint: number = Math.random() * _.sum(selectionOdds);
+  let selectedLearningRate: number = null;
+  while (selectedPoint >= 0) {
+    selectedPoint -= selectionOdds.pop();
+    selectedLearningRate = possibleLearningRates.pop();
+  }
+  state.learningRate = selectedLearningRate;
+  d3.select("#learningRate").property("value", state.learningRate);
+}
+
 function oneStep(): void {
   iter++;
   trainData.forEach((point, i) => {
@@ -915,8 +952,13 @@ function oneStep(): void {
       nn.updateWeights(network, state.learningRate, state.regularizationRate);
     }
   });
-  // Compute the loss.
-  lossTrain = getLoss(network, trainData);
+  learningRateScoreCounts[state.learningRate] += 1;
+  newLossTrain = getLoss(network, trainData);
+  learningRateScoreSums[state.learningRate] += (lossTrain - newLossTrain) /
+    lossTrain;
+  softmaxSelectLearningRate();
+
+  lossTrain = newLossTrain;
   lossTest = getLoss(network, testData);
   updateUI();
 }
@@ -947,6 +989,11 @@ function reset(onStartup=false) {
   let suffix = state.numHiddenLayers !== 1 ? "s" : "";
   d3.select("#layers-label").text("Hidden layer" + suffix);
   d3.select("#num-layers").text(state.numHiddenLayers);
+
+  for (let learningRate of learningRates) {
+    learningRateScoreCounts[learningRate] = 1;
+    learningRateScoreSums[learningRate] = 0;
+  }
 
   // Make a simple network.
   iter = 0;
