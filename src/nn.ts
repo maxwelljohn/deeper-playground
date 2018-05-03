@@ -90,7 +90,10 @@ export interface RegularizationFunction {
 }
 
 function tanh_to_probability(tanh_output: number): number {
-  return (1 + tanh_output) / 2;
+  return Math.max(
+    Math.min((1 + tanh_output) / 2, 0.99999999999999),
+    0.00000000000001
+  );
 }
 
 /** Built-in error functions */
