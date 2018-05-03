@@ -869,13 +869,18 @@ function updateDecisionBoundary(network: nn.Node[][], firstTime: boolean) {
   }
 }
 
+function getLossFunction() {
+  return state.problem === Problem.CLASSIFICATION ? nn.Errors.LOG
+    : nn.Errors.SQUARE;
+}
+
 function getLoss(network: nn.Node[][], dataPoints: Example2D[]): number {
   let loss = 0;
   for (let i = 0; i < dataPoints.length; i++) {
     let dataPoint = dataPoints[i];
     let input = constructInput(dataPoint.x, dataPoint.y);
     let output = nn.forwardProp(network, input);
-    loss += nn.Errors.SQUARE.error(output, dataPoint.label);
+    loss += getLossFunction().error(output, dataPoint.label);
   }
   return loss / dataPoints.length;
 }
@@ -982,7 +987,7 @@ function oneStep(prevNetwork?: nn.Node[][]): void {
   trainData.forEach((point, i) => {
     let input = constructInput(point.x, point.y);
     nn.forwardProp(network, input);
-    nn.backProp(network, point.label, nn.Errors.SQUARE);
+    nn.backProp(network, point.label, getLossFunction());
     if ((i + 1) % state.batchSize === 0) {
       nn.updateWeights(network, state.learningRate, state.regularizationRate);
     }

@@ -89,12 +89,29 @@ export interface RegularizationFunction {
   der: (weight: number) => number;
 }
 
+function tanh_to_probability(tanh_output: number): number {
+  return (1 + tanh_output) / 2;
+}
+
 /** Built-in error functions */
 export class Errors {
   public static SQUARE: ErrorFunction = {
     error: (output: number, target: number) =>
                0.5 * Math.pow(output - target, 2),
     der: (output: number, target: number) => output - target
+  };
+  public static LOG: ErrorFunction = {
+    error: (output: number, target: number): number => {
+      output = tanh_to_probability(output);
+      target = tanh_to_probability(target);
+      return -1*(target * Math.log(output) + (1-target) * Math.log(1-output));
+    },
+    der: (output: number, target: number): number => {
+      output = tanh_to_probability(output);
+      target = tanh_to_probability(target);
+      // 0.5x log loss derivative due to tanh_to_probability & the chain rule.
+      return (-1*(target/output) + (1-target)/(1-output)) * 0.5;
+    }
   };
 }
 
