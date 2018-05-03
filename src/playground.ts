@@ -1002,6 +1002,9 @@ function oneStep(prevNetwork?: nn.Node[][]): void {
       shiftLearningRate(-1);
       oneStep(prevNetwork);
       return;
+    } else {
+      network = prevNetwork;
+      newLossTrain = lossTrain;
     }
   } else if (state.learningRateAutotuning !== -1) {
     softmaxSelectLearningRate();
