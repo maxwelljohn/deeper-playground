@@ -173,6 +173,8 @@ let prevNetwork: nn.Node[][] = null;
 let lossTrain = 0;
 let lossTest = 0;
 let newLossTrain = 0;
+let regPenalty = 0;
+let newRegPenalty = 0;
 let player = new Player();
 let lineChart = new AppendingLineChart(d3.select("#linechart"),
     ["#777", "black"]);
@@ -886,6 +888,24 @@ function getLoss(network: nn.Node[][], dataPoints: Example2D[]): number {
   return loss / dataPoints.length;
 }
 
+function getRegularizationPenalty(network: nn.Node[][]): number {
+  let result: number = 0;
+  for (let layerIdx = 1; layerIdx < network.length; layerIdx++) {
+    let currentLayer = network[layerIdx];
+    for (let i = 0; i < currentLayer.length; i++) {
+      let node = currentLayer[i];
+      for (let j = 0; j < node.inputLinks.length; j++) {
+        let link = node.inputLinks[j];
+        if (!link.isDead) {
+          result += state.regularizationRate *
+            link.regularization.output(link.weight);
+        }
+      }
+    }
+  }
+  return result;
+}
+
 function updateUI(firstStep = false) {
   // Update the links visually.
   updateWeightsUI(network, d3.select("g.core"));
@@ -995,8 +1015,10 @@ function oneStep(prevNetwork?: nn.Node[][]): void {
   });
   learningRateScoreCounts[state.learningRate] += 1;
   newLossTrain = getLoss(network, trainData);
-  learningRateScoreSums[state.learningRate] += (lossTrain - newLossTrain) /
-    lossTrain;
+  regPenalty = getRegularizationPenalty(prevNetwork);
+  newRegPenalty = getRegularizationPenalty(network);
+  learningRateScoreSums[state.learningRate] += ((lossTrain+regPenalty) -
+    (newLossTrain+newRegPenalty)) / (lossTrain+regPenalty);
   if (state.preventLossIncreases && newLossTrain > lossTrain) {
     if (state.learningRate > learningRates[0]) {
       network = _.cloneDeep(prevNetwork);
