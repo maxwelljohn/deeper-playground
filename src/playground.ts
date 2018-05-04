@@ -965,9 +965,12 @@ function constructInput(x: number, y: number): number[] {
 }
 
 function softmaxSelectLearningRate(): void {
-  let possibleLearningRates: number[] = [state.learningRate];
+  let possibleLearningRates: number[] = [];
+  let indexDeltas: number[] = [-1, 0];
+  if (learningRateScoreSums[state.learningRate] > 0) {
+    indexDeltas.push(1);
+  }
   let currentIndex: number = learningRates.indexOf(state.learningRate);
-  let indexDeltas: number[] = [-1, 1];
   for (let indexDelta of indexDeltas) {
     let newIndex: number = currentIndex + indexDelta;
     if (0 <= newIndex && newIndex < learningRates.length) {
@@ -982,8 +985,8 @@ function softmaxSelectLearningRate(): void {
   }
 
   let selectedPoint: number = Math.random() * _.sum(selectionOdds);
-  let selectedLearningRate: number = null;
-  while (selectedPoint >= 0) {
+  let selectedLearningRate: number = learningRates[0];
+  while (selectedPoint > 0) {
     selectedPoint -= selectionOdds.pop();
     selectedLearningRate = possibleLearningRates.pop();
   }
