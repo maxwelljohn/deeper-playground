@@ -888,7 +888,8 @@ function getLoss(network: nn.Node[][], dataPoints: Example2D[]): number {
   return loss / dataPoints.length;
 }
 
-function getRegularizationPenalty(network: nn.Node[][]): number {
+function getRegularizationPenalty(network: nn.Node[][],
+    regRate: number): number {
   let result: number = 0;
   for (let layerIdx = 1; layerIdx < network.length; layerIdx++) {
     let currentLayer = network[layerIdx];
@@ -897,7 +898,7 @@ function getRegularizationPenalty(network: nn.Node[][]): number {
       for (let j = 0; j < node.inputLinks.length; j++) {
         let link = node.inputLinks[j];
         if (!link.isDead) {
-          result += state.regularizationRate *
+          result += regRate *
             link.regularization.output(link.weight);
         }
       }
@@ -1018,8 +1019,9 @@ function oneStep(prevNetwork?: nn.Node[][]): void {
   });
   learningRateScoreCounts[state.learningRate] += 1;
   newLossTrain = getLoss(network, trainData);
-  regPenalty = getRegularizationPenalty(prevNetwork);
-  newRegPenalty = getRegularizationPenalty(network);
+  let regRate = state.regularizationRate;
+  regPenalty = getRegularizationPenalty(prevNetwork, regRate);
+  newRegPenalty = getRegularizationPenalty(network, regRate);
   learningRateScoreSums[state.learningRate] += ((lossTrain+regPenalty) -
     (newLossTrain+newRegPenalty)) / (lossTrain+regPenalty);
   if (state.preventLossIncreases && newLossTrain > lossTrain) {
