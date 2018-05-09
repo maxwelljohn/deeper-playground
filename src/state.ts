@@ -132,7 +132,8 @@ export class State {
     {name: "hideText", type: Type.BOOLEAN},
     {name: "animationSpeed", type: Type.NUMBER},
     {name: "learningRateAutotuning", type: Type.NUMBER},
-    {name: "preventLossIncreases", type: Type.BOOLEAN}
+    {name: "preventLossIncreases", type: Type.BOOLEAN},
+    {name: "dropout", type: Type.NUMBER}
   ];
 
   [key: string]: any;
@@ -168,6 +169,7 @@ export class State {
   animationSpeed = 100;
   learningRateAutotuning = -1;
   preventLossIncreases = false;
+  dropout = 0;
 
   /**
    * Deserializes the state from the url hash.

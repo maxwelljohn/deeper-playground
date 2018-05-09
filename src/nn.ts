@@ -44,6 +44,8 @@ export class Node {
   numAccumulatedDers = 0;
   /** Activation function that takes total input and returns node's output */
   activation: ActivationFunction;
+  /* Used for dropout. */
+  coefficient: number = 1;
 
   /**
    * Creates a new node with the provided id and activation function.
@@ -56,6 +58,10 @@ export class Node {
     }
   }
 
+  dropped(): boolean {
+    return this.coefficient === 0;
+  }
+
   /** Recomputes the node's output and returns it. */
   updateOutput(): number {
     // Stores total input into the node.
@@ -64,7 +70,7 @@ export class Node {
       let link = this.inputLinks[j];
       this.totalInput += link.weight * link.source.output;
     }
-    this.output = this.activation.output(this.totalInput);
+    this.output = this.activation.output(this.totalInput) * this.coefficient;
     return this.output;
   }
 }
@@ -314,7 +320,8 @@ export function backProp(network: Node[][], target: number,
     // 2) each of its input weights.
     for (let i = 0; i < currentLayer.length; i++) {
       let node = currentLayer[i];
-      node.inputDer = node.outputDer * node.activation.der(node.totalInput);
+      node.inputDer = node.outputDer * node.activation.der(node.totalInput) *
+        node.coefficient;
       node.accInputDer += node.inputDer;
       node.numAccumulatedDers++;
     }

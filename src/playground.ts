@@ -189,6 +189,20 @@ let learningRates: number[] = d3.selectAll('#learningRate > option')[0].map((opt
 let learningRateScoreCounts = {};
 let learningRateScoreSums = {};
 
+function doDropout() {
+  for (let layerIdx = 1; layerIdx < (network.length - 1); layerIdx++) {
+    let currentLayer = network[layerIdx];
+    for (let i = 0; i < currentLayer.length; i++) {
+      let node = currentLayer[i];
+      if (Math.random() < state.dropout) {
+        node.coefficient = 0;
+      } else {
+        node.coefficient = 1 / (1 - state.dropout);
+      }
+    }
+  }
+}
+
 function makeGUI() {
   d3.select("#reset-button").on("click", () => {
     reset();
@@ -409,6 +423,24 @@ function makeGUI() {
   // preventLossIncreases === true && learningRateAutotuning === -1
   learningRateAutotuning.property("value", state.learningRateAutotuning);
 
+  let dropout = d3.select("#dropout").on("change", function() {
+    state.dropout = +this.value;
+    if (state.dropout > 0 && state.animationSpeed > 5) {
+      state.animationSpeed = 5;
+      animationSpeed.property("value", 5);
+    }
+    state.serialize();
+    userHasInteracted();
+    parametersChanged = true;
+    doDropout();
+    updateUI();
+  });
+  dropout.property("value", state.dropout);
+  if (state.dropout > 0 && state.animationSpeed > 5) {
+    state.animationSpeed = 5;
+    animationSpeed.property("value", 5);
+  }
+
   // Add scale to the gradient color map.
   let x = d3.scale.linear().domain([-1, 1]).range([0, 144]);
   let xAxis = d3.svg.axis()
@@ -443,8 +475,17 @@ function makeGUI() {
 
 function updateBiasesUI(network: nn.Node[][]) {
   nn.forEachNode(network, true, node => {
-    d3.select(`rect#bias-${node.id}`).style("fill", colorScale(node.bias));
-    let active = Math.random() < 0.5;
+    if (node.dropped()) {
+      d3.select(`rect#bias-${node.id}`).style("fill", colorScale(0));
+    } else {
+      d3.select(`rect#bias-${node.id}`).style("fill", colorScale(node.bias));
+    }
+  });
+}
+
+function updateDropoutUI(network: nn.Node[][]) {
+  nn.forEachNode(network, false, node => {
+    let active = !node.dropped();
     let nodeGroup = d3.select(`#node${node.id}`);
     nodeGroup.classed("active", active);
     nodeGroup.classed("inactive", !active);
@@ -462,13 +503,19 @@ function updateWeightsUI(network: nn.Node[][], container: d3.Selection<any>) {
       let node = currentLayer[i];
       for (let j = 0; j < node.inputLinks.length; j++) {
         let link = node.inputLinks[j];
-        container.select(`#link${link.source.id}-${link.dest.id}`)
-            .style({
+        let dropped: boolean = link.source.dropped() || link.dest.dropped();
+        let elem = container.select(`#link${link.source.id}-${link.dest.id}`);
+        elem.datum(link);
+        if (dropped) {
+          elem.style("display", "none");
+        } else {
+          elem.style({
+              "display": "inline",
               "stroke-dashoffset": -iter / 3,
               "stroke-width": linkWidthScale(Math.abs(link.weight)),
               "stroke": colorScale(link.weight)
-            })
-            .datum(link);
+          });
+        }
       }
     }
   }
@@ -931,6 +978,7 @@ function updateUI(firstStep = false) {
   updateWeightsUI(network, d3.select("g.core"));
   // Update the bias values visually.
   updateBiasesUI(network);
+  updateDropoutUI(network);
   // Get the decision boundary of the network.
   updateDecisionBoundary(network, firstStep);
   let selectedId = selectedNodeId != null ?
@@ -1059,6 +1107,7 @@ function oneStep(prevNetwork?: nn.Node[][]): void {
 
   lossTrain = newLossTrain;
   lossTest = getLoss(network, testData);
+  doDropout();
   updateUI();
 }
 
@@ -1102,6 +1151,7 @@ function reset(onStartup=false) {
       nn.Activations.LINEAR : nn.Activations.TANH;
   network = nn.buildNetwork(shape, state.activation, outputActivation,
       state.regularization, constructInputIds(), state.initZero);
+  doDropout();
   lossTrain = getLoss(network, trainData);
   lossTest = getLoss(network, testData);
   drawNetwork(network);
