@@ -136,7 +136,7 @@ class Player {
       if (localTimerIndex < this.timerIndex) {
         return true;  // Done.
       }
-      if (this.timerCount % 10 == 0) {
+      if (this.timerCount % Math.round(1 / (state.animationSpeed / 100)) === 0) {
         oneStep();
       }
       this.timerCount++;
@@ -376,6 +376,14 @@ function makeGUI() {
     reset();
   });
   problem.property("value", getKeyFromValue(problems, state.problem));
+
+  let animationSpeed = d3.select("#animationSpeed").on("change", function() {
+    state.animationSpeed = +this.value;
+    state.serialize();
+    userHasInteracted();
+    parametersChanged = true;
+  });
+  animationSpeed.property("value", state.animationSpeed);
 
   let learningRateAutotuning = d3.select("#learningRateAutotuning").on("change", function() {
     state.learningRateAutotuning = +this.value;

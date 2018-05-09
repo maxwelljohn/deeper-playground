@@ -130,6 +130,7 @@ export class State {
     {name: "problem", type: Type.OBJECT, keyMap: problems},
     {name: "initZero", type: Type.BOOLEAN},
     {name: "hideText", type: Type.BOOLEAN},
+    {name: "animationSpeed", type: Type.NUMBER},
     {name: "learningRateAutotuning", type: Type.NUMBER},
     {name: "preventLossIncreases", type: Type.BOOLEAN}
   ];
@@ -164,6 +165,7 @@ export class State {
   dataset: dataset.DataGenerator = dataset.classifyCircleData;
   regDataset: dataset.DataGenerator = dataset.regressPlane;
   seed: string;
+  animationSpeed = 100;
   learningRateAutotuning = -1;
   preventLossIncreases = false;
 
