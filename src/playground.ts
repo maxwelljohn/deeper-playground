@@ -399,6 +399,14 @@ function makeGUI() {
   });
   animationSpeed.property("value", state.animationSpeed);
 
+  let layerwise = d3.select("#layerwise").on("change", function() {
+    state.layerwiseGradientNormalization = +this.value;
+    state.serialize();
+    userHasInteracted();
+    parametersChanged = true;
+  });
+  layerwise.property("value", state.layerwiseGradientNormalization);
+
   let learningRateAutotuning = d3.select("#learningRateAutotuning").on("change", function() {
     state.learningRateAutotuning = +this.value;
     state.serialize();
@@ -1081,7 +1089,8 @@ function oneStep(prevNetwork?: nn.Node[][]): void {
     nn.forwardProp(network, input);
     nn.backProp(network, point.label, getLossFunction());
     if ((i + 1) % state.batchSize === 0) {
-      nn.updateWeights(network, state.learningRate, state.regularizationRate);
+      nn.updateWeights(network, state.learningRate, state.regularizationRate,
+        state.layerwiseGradientNormalization);
     }
   });
   learningRateScoreCounts[state.learningRate] += 1;

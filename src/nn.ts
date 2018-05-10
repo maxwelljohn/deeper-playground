@@ -360,7 +360,7 @@ export function backProp(network: Node[][], target: number,
  * derivatives.
  */
 export function updateWeights(network: Node[][], learningRate: number,
-    regularizationRate: number) {
+    regularizationRate: number, layerwiseGradientNormalization: number) {
   function updateLayerWeights(currentLayer: Node[], dryRun: boolean, layerLearningRate: number) {
     for (let i = 0; i < currentLayer.length; i++) {
       let node = currentLayer[i];
@@ -421,7 +421,9 @@ export function updateWeights(network: Node[][], learningRate: number,
     }).reduce(function sum(x: number, y: number) {
       return x + y;
     }) ** (1/2);
-    let layerLearningRate = layerGradientNorm == 0 ? 0 : (learningRate / layerGradientNorm);
+    let layerGradientDivisor = layerGradientNorm ** layerwiseGradientNormalization;
+    let layerLearningRate = layerGradientNorm == 0 ? 0 :
+      (learningRate / layerGradientDivisor);
     updateLayerWeights(currentLayer, false, layerLearningRate);
   }
 }

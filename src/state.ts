@@ -131,6 +131,7 @@ export class State {
     {name: "initZero", type: Type.BOOLEAN},
     {name: "hideText", type: Type.BOOLEAN},
     {name: "animationSpeed", type: Type.NUMBER},
+    {name: "layerwiseGradientNormalization", type: Type.NUMBER},
     {name: "learningRateAutotuning", type: Type.NUMBER},
     {name: "preventLossIncreases", type: Type.BOOLEAN},
     {name: "dropout", type: Type.NUMBER}
@@ -166,10 +167,11 @@ export class State {
   dataset: dataset.DataGenerator = dataset.classifyCircleData;
   regDataset: dataset.DataGenerator = dataset.regressPlane;
   seed: string;
-  animationSpeed = 100;
-  learningRateAutotuning = -1;
-  preventLossIncreases = false;
-  dropout = 0;
+  animationSpeed: number = 100;
+  layerwiseGradientNormalization: number = 0;
+  learningRateAutotuning: number = -1;
+  preventLossIncreases: boolean = false;
+  dropout: number = 0;
 
   /**
    * Deserializes the state from the url hash.
