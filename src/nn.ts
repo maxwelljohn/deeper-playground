@@ -13,6 +13,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 
+import _ = require('lodash');
+
 /**
  * A node in a neural network. Each node has a state
  * (total input, output, and their respectively derivatives) which changes
@@ -355,40 +357,78 @@ export function backProp(network: Node[][], target: number,
   }
 }
 
+export function createVelocity(network: Node[][]): number[][][] {
+  let result: number[][][] = [];
+  result.push(null);  // Dummy value for input layer
+  for (let layerIdx = 1; layerIdx < network.length; layerIdx++) {
+    result.push([]);
+    let currentLayer: Node[] = network[layerIdx];
+    for (let i = 0; i < currentLayer.length; i++) {
+      let node: Node = currentLayer[i];
+      result[layerIdx].push([]);
+      result[layerIdx][i].push(0);  // Bias
+      for (let j = 0; j < node.inputLinks.length; j++) {
+        result[layerIdx][i].push(0);
+      }
+    }
+  }
+  return result;
+}
+
 /**
  * Updates the weights of the network using the previously accumulated error
  * derivatives.
  */
 export function updateWeights(network: Node[][], learningRate: number,
-    regularizationRate: number, layerwiseGradientNormalization: number) {
-  function updateLayerWeights(currentLayer: Node[], dryRun: boolean, layerLearningRate: number) {
-    for (let i = 0; i < currentLayer.length; i++) {
-      let node = currentLayer[i];
-      let layerGradient: number[] = [];
-      // Update the node's bias.
-      if (node.numAccumulatedDers > 0) {
-        let partial = node.accInputDer / node.numAccumulatedDers;
-        if (dryRun) {
-          layerGradient.push(partial);
-        } else {
-          node.bias -= layerLearningRate * partial;
-          node.accInputDer = 0;
-          node.numAccumulatedDers = 0;
-        }
+    regularizationRate: number, layerwiseGradientNormalization: number,
+    velocity: number[][][], momentum: number) {
+  function updateLayerVelocity(layer: Node[], layerVelocity: number[][]) {
+    for (let i = 0; i < layer.length; i++) {
+      let node = layer[i];
+      if (node.numAccumulatedDers <= 0) {
+        throw new Error("Accumulated derivatives needed for bias weight update");
       }
-      // Update the weights coming into this node.
+      // Update velocity for the node's bias.
+      let partial = node.accInputDer / node.numAccumulatedDers;
+      layerVelocity[i][0] = momentum * layerVelocity[i][0] + (1-momentum) * partial;
+      // Update velocity for the weights coming into this node.
       for (let j = 0; j < node.inputLinks.length; j++) {
         let link = node.inputLinks[j];
         if (link.isDead) {
           continue;
         }
         let regulDer = link.regularization ?
-            link.regularization.der(link.weight) : 0;
-        if (link.numAccumulatedDers > 0) {
-          if (dryRun) {
-            let partial = link.accErrorDer / link.numAccumulatedDers + regularizationRate * regulDer;
-            layerGradient.push(partial);
-          } else {
+          link.regularization.der(link.weight) : 0;
+        if (link.numAccumulatedDers <= 0) {
+          throw new Error("Accumulated derivatives needed for link weight update");
+        }
+        let partial = link.accErrorDer / link.numAccumulatedDers + regularizationRate * regulDer;
+        layerVelocity[i][j+1] = momentum * layerVelocity[i][j+1] + (1-momentum) * partial;
+      }
+    }
+  }
+  function updateLayerWeights(currentLayer: Node[], layerLearningRate: number,
+      layerVelocity: number[][]) {
+    for (let i = 0; i < currentLayer.length; i++) {
+      let node = currentLayer[i];
+      // Update the node's bias.
+      node.bias -= layerLearningRate * layerVelocity[i][0];
+      node.accInputDer = 0;
+      node.numAccumulatedDers = 0;
+
+      // Update the weights coming into this node.
+      for (let j = 0; j < node.inputLinks.length; j++) {
+        let link = node.inputLinks[j];
+        if (link.isDead) {
+          continue;
+        }
+        if (momentum > 0) {
+          link.weight -= layerLearningRate * layerVelocity[i][j+1];
+          link.accErrorDer = 0;
+          link.numAccumulatedDers = 0;
+        } else {
+          let regulDer = link.regularization ?
+              link.regularization.der(link.weight) : 0;
           // Update the weight based on dE/dw.
           link.weight = link.weight -
               (layerLearningRate / link.numAccumulatedDers) * link.accErrorDer;
@@ -405,26 +445,24 @@ export function updateWeights(network: Node[][], learningRate: number,
           }
           link.accErrorDer = 0;
           link.numAccumulatedDers = 0;
-          }
         }
-      }
-      if (dryRun) {
-        return layerGradient;
       }
     }
   }
   for (let layerIdx = 1; layerIdx < network.length; layerIdx++) {
     let currentLayer = network[layerIdx];
-    let layerGradient = updateLayerWeights(currentLayer, true, 0);
-    let layerGradientNorm = layerGradient.map(function square(x: number) {
+    let layerVelocity: number[][] = velocity[layerIdx];
+    updateLayerVelocity(currentLayer, layerVelocity);
+    let layerVelocityNorm: number = _.flatten(layerVelocity)
+      .map(function square(x: number) {
       return x * x;
     }).reduce(function sum(x: number, y: number) {
       return x + y;
     }) ** (1/2);
-    let layerGradientDivisor = layerGradientNorm ** layerwiseGradientNormalization;
-    let layerLearningRate = layerGradientNorm == 0 ? 0 :
-      (learningRate / layerGradientDivisor);
-    updateLayerWeights(currentLayer, false, layerLearningRate);
+    let layerVelocityDivisor: number = layerVelocityNorm ** layerwiseGradientNormalization;
+    let layerLearningRate: number = layerVelocityNorm === 0 ? 0 :
+      (learningRate / layerVelocityDivisor);
+    updateLayerWeights(currentLayer, layerLearningRate, layerVelocity);
   }
 }
 

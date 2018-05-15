@@ -134,7 +134,8 @@ export class State {
     {name: "layerwiseGradientNormalization", type: Type.NUMBER},
     {name: "learningRateAutotuning", type: Type.NUMBER},
     {name: "preventLossIncreases", type: Type.BOOLEAN},
-    {name: "dropout", type: Type.NUMBER}
+    {name: "dropout", type: Type.NUMBER},
+    {name: "momentum", type: Type.NUMBER}
   ];
 
   [key: string]: any;
@@ -172,6 +173,7 @@ export class State {
   learningRateAutotuning: number = -1;
   preventLossIncreases: boolean = false;
   dropout: number = 0;
+  momentum: number = 0;
 
   /**
    * Deserializes the state from the url hash.

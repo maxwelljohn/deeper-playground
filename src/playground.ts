@@ -189,6 +189,8 @@ let learningRates: number[] = d3.selectAll('#learningRate > option')[0].map((opt
 let learningRateScoreCounts = {};
 let learningRateScoreSums = {};
 
+let velocity: number[][][];
+
 function doDropout() {
   for (let layerIdx = 1; layerIdx < (network.length - 1); layerIdx++) {
     let currentLayer = network[layerIdx];
@@ -448,6 +450,14 @@ function makeGUI() {
     state.animationSpeed = 5;
     animationSpeed.property("value", 5);
   }
+
+  let momentum = d3.select("#momentum").on("change", function() {
+    state.momentum = +this.value;
+    state.serialize();
+    userHasInteracted();
+    parametersChanged = true;
+  });
+  momentum.property("value", state.momentum);
 
   // Add scale to the gradient color map.
   let x = d3.scale.linear().domain([-1, 1]).range([0, 144]);
@@ -1089,8 +1099,9 @@ function oneStep(prevNetwork?: nn.Node[][]): void {
     nn.forwardProp(network, input);
     nn.backProp(network, point.label, getLossFunction());
     if ((i + 1) % state.batchSize === 0) {
-      nn.updateWeights(network, state.learningRate, state.regularizationRate,
-        state.layerwiseGradientNormalization);
+      nn.updateWeights(network, state.learningRate,
+        state.regularizationRate, state.layerwiseGradientNormalization,
+        velocity, state.momentum);
     }
   });
   learningRateScoreCounts[state.learningRate] += 1;
@@ -1165,6 +1176,7 @@ function reset(onStartup=false) {
   lossTest = getLoss(network, testData);
   drawNetwork(network);
   updateUI(true);
+  velocity = nn.createVelocity(network);
 };
 
 function initTutorial() {
