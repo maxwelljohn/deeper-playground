@@ -1216,7 +1216,7 @@ function drawDatasetThumbnails() {
     let data = dataGenerator(200, 0);
     data.forEach(function(d) {
       context.fillStyle = colorScale(d.label);
-      context.fillRect(w * (d.x + 6) / 12, h * (d.y + 6) / 12, 4, 4);
+      context.fillRect(w * (d.x + 6) / 12, h * (1 - (d.y + 6) / 12), 4, 4);
     });
     d3.select(canvas.parentNode).style("display", null);
   }
