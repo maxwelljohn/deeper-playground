@@ -204,6 +204,109 @@ export function classifyXORData(numSamples: number, noise: number):
   return points;
 }
 
+export function classifyMoonsData(numSamples: number, noise: number):
+    Example2D[] {
+  let points: Example2D[] = [];
+  for (let i = 0; i < numSamples/2; i++) {
+    let selection = randUniform(0, Math.PI);
+    let x = 2.5*(Math.cos(selection)-0.5) + randUniform(-1, 1) * noise;
+    let y = 2.5*(Math.sin(selection)-0.25) + randUniform(-1, 1) * noise;
+    let label = 1;
+    points.push({x, y, label});
+  }
+  for (let i = 0; i < numSamples/2; i++) {
+    let selection = randUniform(0, Math.PI);
+    let x = 2.5*(-Math.cos(selection)+0.5) + randUniform(-1, 1) * noise;
+    let y = 2.5*(-Math.sin(selection)+0.25) + randUniform(-1, 1) * noise;
+    let label = -1;
+    points.push({x, y, label});
+  }
+  return points;
+}
+
+function polarHeart(t: number): number {
+  t += Math.PI/2;
+  // From https://pavpanchekha.com/blog/heart-polar-coordinates.html
+  let r = (Math.sin(t)*Math.sqrt(Math.abs(Math.cos(t)))) / (Math.sin(t) + 7/5) -
+    2 * Math.sin(t) + 2;
+  return r;
+}
+
+export function classifyHeartData(numSamples: number, noise: number):
+    Example2D[] {
+  let points: Example2D[] = [];
+  let step = (2 * Math.PI) / (numSamples/2);
+  for (let i = 0; i < numSamples/2; i++) {
+    let t = i * step;
+    let r = polarHeart(t);
+    let x = 2.25 * r * Math.sin(t) + randUniform(-1, 1) * noise;
+    let y = 3.75 + 2.25 * r * Math.cos(t) + randUniform(-1, 1) * noise;
+    let label = -1;
+    points.push({x, y, label});
+    x = 2.25 * (r-0.5) * Math.sin(t) + randUniform(-1, 1) * noise;
+    y = 3.5 + 2.25 * (r-0.6) * Math.cos(t) + randUniform(-1, 1) * noise;
+    label = 1;
+    points.push({x, y, label});
+  }
+  return points;
+}
+
+function polarSnowflake(t: number): number {
+  return 3.8 + 1.8 * Math.cos(6*(t+Math.PI/6));
+}
+
+export function classifySnowflakeData(numSamples: number, noise: number):
+    Example2D[] {
+  let points: Example2D[] = [];
+  let step = (2 * Math.PI) / (numSamples/2);
+  for (let i = 0; i < numSamples/2; i++) {
+    let t = i * step;
+    let r = polarSnowflake(t);
+    let x = r * Math.sin(t) + randUniform(-1, 1) * noise;
+    let y = r * Math.cos(t) + randUniform(-1, 1) * noise;
+    let label = -1;
+    points.push({x, y, label});
+    x = (r-1.2) * Math.sin(t) + randUniform(-1, 1) * noise;
+    y = (r-1.2) * Math.cos(t) + randUniform(-1, 1) * noise;
+    label = 1;
+    points.push({x, y, label});
+  }
+  return points;
+}
+
+function polarInfinity(t: number): number {
+  let c = Math.cos(2*(t+Math.PI/2));
+  if (c > 0) {
+    return Math.sqrt(25 * c);
+  } else {
+    return null;
+  }
+}
+
+export function classifyInfinityData(numSamples: number, noise: number):
+    Example2D[] {
+  let points: Example2D[] = [];
+  let step = (2 * Math.PI) / numSamples;
+  // This is a hack since we can't take the square root of a negative number.
+  // See if statement in the polarInfinity function.
+  numSamples *= 2;
+  for (let i = 0; i < numSamples/2; i++) {
+    let t = i * step;
+    let r = polarInfinity(t);
+    if (r !== null) {
+      let x = r * Math.sin(t) + randUniform(-1, 1) * noise;
+      let y = 1.2 * r * Math.cos(t) + randUniform(-1, 1) * noise;
+      let label = i < numSamples/4 ? 1 : -1;
+      points.push({x, y, label});
+      x = (r-1) * Math.sin(t) + randUniform(-1, 1) * noise;
+      y = 1.2 * (r-1) * Math.cos(t) + randUniform(-1, 1) * noise;
+      label = i < numSamples/4 ? -1 : 1;
+      points.push({x, y, label});
+    }
+  }
+  return points;
+}
+
 /**
  * Returns a sample from a uniform [a, b] distribution.
  * Uses the seedrandom library as the random generator.
