@@ -92,9 +92,9 @@ let HIDABLE_CONTROLS = [
 
 class Player {
   private timerIndex = 0;
-  private isPlaying = false;
   private callback: (isPlaying: boolean) => void = null;
   private timerCount = 0;
+  isPlaying = false;
 
   /** Plays/pauses the player. */
   playOrPause() {
@@ -358,6 +358,17 @@ function makeGUI() {
   });
   activationDropdown.property("value",
       getKeyFromValue(activations, state.activation));
+
+  d3.select("#learningRate").on("mousedown", function() {
+    if (player.isPlaying && state.learningRateAutotuning !== -1) {
+      // Don't let the user modify the learning rate if it's being autotuned.
+      // Attempting this caused UI glitchiness on Chrome.
+      if (d3.event instanceof Event) {
+        d3.event.preventDefault();
+        d3.event.stopPropagation();
+      }
+    }
+  });
 
   let learningRate = d3.select("#learningRate").on("change", function() {
     state.learningRate = +this.value;
