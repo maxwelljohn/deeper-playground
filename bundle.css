@@ -54,7 +54,7 @@ h3 {
   margin: 10px 0;
 }
 
-p a {
+p a, ul a, label a {
   color: #0D658C;
 }
 
@@ -241,18 +241,18 @@ header h1 .optional {
 
 #top-controls {
   border-bottom: 1px solid #ddd;
-  padding: 18px 0;
   box-shadow: 0 1px 4px rgba(0,0,0,0.08);
   background: white;
 }
 
 @media (min-height: 700px) {
-  #top-controls {
+  #top-controls .container {
     padding: 24px 0;
   }
 }
 
 #top-controls .container {
+  padding: 18px 0;
   display: -webkit-box;
   display: -moz-box;
   display: -ms-flexbox;
@@ -870,12 +870,28 @@ article :first-child h2 {
   margin-top: 0;
 }
 
-article p {
+article p, article ul, article blockquote {
   font-weight: 400;
   font-size: 17px;
   line-height: 1.6;
   color: rgba(0, 0, 0, 0.7);
+}
 
+article ul {
+  margin: 0;
+}
+
+article li {
+  margin: 0 0 16px;
+}
+
+article .material-icons {
+  font-size: 15px;
+}
+
+article img {
+  display: block;
+  margin: 0 auto;
 }
 
 /* Footer */
