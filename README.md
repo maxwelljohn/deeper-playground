@@ -12,9 +12,3 @@ To run the visualization locally you just need a server to serve all the files f
 
 When developing, use `npm run serve-watch`. This will start a static server and also watchers to automatically compile the TypeScript, HTML and CSS files
 whenever they change.
-
-To produce a minified JavaScript file for production, run `npm run build`.
-
-To push to production: `git subtree push --prefix dist origin gh-pages`.
-
-This is not an official Google product.
