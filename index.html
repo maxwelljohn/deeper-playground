@@ -22,13 +22,13 @@ limitations under the License.
 
   <meta property="og:type" content="article"/>
   <meta property="og:title" content="Tensorflow — Neural Network Playground"/>
-  <meta property="og:description" content="Tinker with a real neural network right here in your browser.">
+  <meta property="og:description" content="Do deep learning research right here in your browser.">
   <meta property="og:url" content="http://playground.tensorflow.org"/>
   <meta property="og:image" content="http://playground.tensorflow.org/preview.png"/>
 
   <meta name="twitter:card" value="summary_large_image">
   <meta name="twitter:title" content="Tensorflow — Neural Network Playground">
-  <meta name="twitter:description" content="Tinker with a real neural network right here in your browser.">
+  <meta name="twitter:description" content="Do deep learning research right here in your browser.">
   <meta name="twitter:url" content="http://playground.tensorflow.org">
   <meta name="twitter:image" content="http://playground.tensorflow.org/preview.png">
   <meta name="twitter:image:width" content="560">
@@ -50,7 +50,7 @@ limitations under the License.
   </a>
   <!-- Header -->
   <header>
-    <h1 class="l--page">Tinker With a <b>Neural Network</b> <span class="optional">Right Here </span>in Your Browser.<br>Don’t Worry, You Can’t Break It. We Promise.</h1>
+    <h1 class="l--page">Do <b>Deep Learning</b> Research <span class="optional">Right Here </span>in Your Browser.</h1>
   </header>
 
   <!-- Top Controls -->
@@ -76,14 +76,6 @@ limitations under the License.
         <label for="learningRate">Learning rate</label>
         <div class="select">
           <select id="learningRate">
-            <option value="0.0000000001">0.0000000001</option>
-            <option value="0.0000000003">0.0000000003</option>
-            <option value="0.000000001">0.000000001</option>
-            <option value="0.000000003">0.000000003</option>
-            <option value="0.00000001">0.00000001</option>
-            <option value="0.00000003">0.00000003</option>
-            <option value="0.0000001">0.0000001</option>
-            <option value="0.0000003">0.0000003</option>
             <option value="0.000001">0.000001</option>
             <option value="0.000003">0.000003</option>
             <option value="0.00001">0.00001</option>
@@ -103,7 +95,7 @@ limitations under the License.
         </div>
       </div>
       <div class="control ui-activation">
-        <label for="activations">Activation</label>
+        <label for="activations"><a href="#activations-doc">Activation</a></label>
         <div class="select">
           <select id="activations">
             <option value="relu">ReLU</option>
@@ -127,7 +119,7 @@ limitations under the License.
         </div>
       </div>
       <div class="control ui-regularizationRate">
-        <label for="regularRate">Regularization rate</label>
+        <label for="regularRate"><a href="#regularRate-doc">Regularization rate</a></label>
         <div class="select">
           <select id="regularRate">
             <option value="0">0</option>
@@ -154,8 +146,10 @@ limitations under the License.
       </div>
     </div>
     <div class="container l--page">
+      <div class="timeline-controls">
+      </div>
       <div class="control ui-animationSpeed">
-        <label for="animationSpeed"><br/>Animation speed</label>
+        <label for="animationSpeed"><br/><br/><a href="#animationSpeed-doc">Animation speed</a></label>
         <div class="select">
           <select id="animationSpeed">
             <option value="100">100%</option>
@@ -167,8 +161,45 @@ limitations under the License.
           </select>
         </div>
       </div>
+      <div class="control ui-dropout">
+        <label for="dropout"><br/><br/><a href="#dropout-doc">Dropout</a></label>
+        <div class="select">
+          <select id="dropout">
+            <option value="0">Drop 0%</option>
+            <option value="0.1">Drop 10%</option>
+            <option value="0.2">Drop 20%</option>
+            <option value="0.3">Drop 30%</option>
+            <option value="0.4">Drop 40%</option>
+            <option value="0.5">Drop 50%</option>
+            <option value="0.6">Drop 60%</option>
+            <option value="0.7">Drop 70%</option>
+            <option value="0.8">Drop 80%</option>
+            <option value="0.9">Drop 90%</option>
+          </select>
+        </div>
+      </div>
+      <div class="control ui-momentum">
+        <label for="momentum"><br/><br/><a href="#momentum-doc">Momentum</a></label>
+        <div class="select">
+          <select id="momentum">
+            <option value="0">0</option>
+            <option value="0.1">0.1</option>
+            <option value="0.2">0.2</option>
+            <option value="0.3">0.3</option>
+            <option value="0.4">0.4</option>
+            <option value="0.5">0.5</option>
+            <option value="0.6">0.6</option>
+            <option value="0.7">0.7</option>
+            <option value="0.8">0.8</option>
+            <option value="0.9">0.9</option>
+            <option value="0.95">0.95</option>
+            <option value="0.99">0.99</option>
+            <option value="0.999">0.999</option>
+          </select>
+        </div>
+      </div>
       <div class="control ui-layerwise">
-        <label for="layerwise">Layerwise<br/>Gradient Normalization</label>
+        <label for="layerwise"><a href="#layerwise-doc">Layerwise<br/>gradient<br/>normalization</a></label>
         <div class="select">
           <select id="layerwise">
             <option value="0">p = 0 (None)</option>
@@ -186,7 +217,7 @@ limitations under the License.
         </div>
       </div>
       <div class="control ui-learningRateAutotuning">
-        <label for="learningRateAutotuning"><a href="#">Learning rate autotuning</a></label>
+        <label for="learningRateAutotuning"><a href="#learningRateAutotuning-doc"><br/>Learning rate<br/>autotuning</a></label>
         <div class="select">
           <select id="learningRateAutotuning">
             <option value="-1">None</option>
@@ -199,56 +230,11 @@ limitations under the License.
         </div>
       </div>
       <div class="control ui-preventLossIncreases">
-        <label for="preventLossIncreases"><a href="#">Prevent loss increases</a></label>
+        <label for="preventLossIncreases"><a href="#preventLossIncreases-doc"><br/>Prevent<br/>loss increases</a></label>
         <div class="select">
           <select id="preventLossIncreases">
             <option value="true">Yes</option>
             <option value="false">No</option>
-          </select>
-        </div>
-      </div>
-      <div class="control ui-placeholder">
-        <label for="dropout"><br/>Dropout</label>
-        <div class="select">
-          <select id="dropout">
-            <option value="0">Drop 0%</option>
-            <option value="0.1">Drop 10%</option>
-            <option value="0.2">Drop 20%</option>
-            <option value="0.3">Drop 30%</option>
-            <option value="0.4">Drop 40%</option>
-            <option value="0.5">Drop 50%</option>
-            <option value="0.6">Drop 60%</option>
-            <option value="0.7">Drop 70%</option>
-            <option value="0.8">Drop 80%</option>
-            <option value="0.9">Drop 90%</option>
-          </select>
-        </div>
-      </div>
-      <div class="control ui-momentum">
-        <label for="momentum"><br/>Momentum</label>
-        <div class="select">
-          <select id="momentum">
-            <option value="0">0</option>
-            <option value="0.1">0.1</option>
-            <option value="0.2">0.2</option>
-            <option value="0.3">0.3</option>
-            <option value="0.4">0.4</option>
-            <option value="0.5">0.5</option>
-            <option value="0.6">0.6</option>
-            <option value="0.7">0.7</option>
-            <option value="0.8">0.8</option>
-            <option value="0.9">0.9</option>
-            <option value="0.95">0.95</option>
-            <option value="0.99">0.99</option>
-          </select>
-        </div>
-      </div>
-      <div class="control ui-placeholder">
-        <label for="placeholder"><br/>Placeholder</label>
-        <div class="select">
-          <select id="placeholder">
-            <option value="50">50%</option>
-            <option value="100">100%</option>
           </select>
         </div>
       </div>
@@ -448,42 +434,52 @@ limitations under the License.
 
   <article id="article-text">
     <div class="l--body">
-      <h2>Um, What Is a Neural Network?</h2>
-      <p>It’s a technique for building a computer program that learns from data. It is based very loosely on how we think the human brain works. First, a collection of software “neurons” are created and connected together, allowing them to send messages to each other. Next, the network is asked to solve a problem, which it attempts to do over and over, each time strengthening the connections that lead to success and diminishing those that lead to failure. For a more detailed introduction to neural networks, Michael Nielsen’s <a href="http://neuralnetworksanddeeplearning.com/index.html">Neural Networks and Deep Learning</a> is a good place to start. For a more technical overview, try <a href="http://www.deeplearningbook.org/">Deep Learning</a> by Ian Goodfellow, Yoshua Bengio, and Aaron Courville.</p>
+      <h2>Um, What Is This?</h2>
+      <p>It's a fork of <a href="http://playground.tensorflow.org">TensorFlow Playground</a> with additional features.</p>
+      <p>Deep learning research is famously empirical.  But traditionally, getting good intuitions requires a cluster of servers with which to try out a wide variety of hyperparameters.  Visualization allows you to quickly get a sense for how a neural net behaves &amp; speed up feedback loops in research.</p>
     </div>
-
     <div class="l--body">
-      <h2>This Is Cool, Can I Repurpose It?</h2>
-      <p>Please do! We’ve open sourced it on <a href="https://github.com/tensorflow/playground">GitHub</a> with the hope that it can make neural networks a little more accessible and easier to learn. You’re free to use it in any way that follows our <a href="https://github.com/tensorflow/playground/blob/master/LICENSE">Apache License</a>. And if you have any suggestions for additions or changes, please <a href="https://github.com/tensorflow/playground/issues">let us know</a>.</p>
-      <p>We’ve also provided some controls below to enable you tailor the playground to a specific topic or lesson. Just choose which features you’d like to be visible below then save <a class="hide-controls-link" href="#">this link</a>, or <a href="javascript:location.reload();">refresh</a> the page.</p>
-      <div class="hide-controls"></div>
-    </div>
-
-    <div class="l--body">
-      <h2>What Do All the Colors Mean?</h2>
-      <p>Orange and blue are used throughout the visualization in slightly different ways, but in general orange shows negative values while blue shows positive values.</p>
-      <p>The data points (represented by small circles) are initially colored orange or blue, which correspond to positive one and negative one.</p>
-      <p>In the hidden layers, the lines are colored by the weights of the connections between neurons. Blue shows a positive weight, which means the network is using that output of the neuron as given. An orange line shows that the network is assiging a negative weight.</p>
-      <p>In the output layer, the dots are colored orange or blue depending on their original values. The background color shows what the network is predicting for a particular area. The intensity of the color shows how confident that prediction is.</p>
-    </div>
-
-    <div class="l--body">
-      <h2>What Library Are You Using?</h2>
-      <p>We wrote a tiny neural network <a href="https://github.com/tensorflow/playground/blob/master/src/nn.ts">library</a>
-      that meets the demands of this educational visualization. For real-world applications, consider the
-      <a href="https://www.tensorflow.org/">TensorFlow</a> library.
-      </p>
+      <h2>What did you add to the original Playground?</h2>
+      <p>First, I changed the loss function for classification from the squared loss (used by the original Playground developers) to log loss.  This change isn't visible in the interface.  But it's essential for building intuition, since log loss is what's used for classification in the real world.</p>
+      <p>The remaining changes are a mixture of standard deep learning techniques not present in the original and research ideas of my own that I wanted to explore through visualization.</p>
+      <p id="activations-doc"><b>Activation</b>: I added several activation functions not present in the original Playground: <a href="https://arxiv.org/abs/1505.00853">Leaky ReLU</a> (leak parameter = 0.01), <a href="https://arxiv.org/abs/1511.07289">ELU</a> (&#x1D6FC; = 1), "<a href="https://arxiv.org/abs/1710.05941">Swish</a>" (&#x1D6FD; = 1; equivalent to the <a href="https://arxiv.org/abs/1702.03118">sigmoid-weighted linear unit</a>), and <a href="https://arxiv.org/abs/1710.05941">SoftPlus</a>. <a href="#top-controls"><i class="material-icons">arrow_upward</i></a></p>
+      <p id="regularRate-doc"><b>Regularization rate</b>: The original Playground resets the simulation whenever the regularization rate is modified.  This fits with standard deep learning practice, where the regularization rate remains fixed during training.</p>
+      <p>But I was interested in varying the regularization rate during training, to see if it's possible to discover a simpler model this way.  And indeed, this appears to be the case.</p>
+      <p><a href="/#activation=tanh&regularization=L2&batchSize=10&dataset=circle&regDataset=reg-plane&learningRate=0.03&regularizationRate=0.1&noise=0&networkShape=4,2&seed=0.17668&showTestData=false&discretize=false&percTrainData=50&x=true&y=true&xTimesY=false&xSquared=false&ySquared=false&cosX=false&sinX=false&cosY=false&sinY=false&collectStats=false&problem=classification&initZero=false&hideText=false&animationSpeed=100&layerwiseGradientNormalization=0&learningRateAutotuning=-1&preventLossIncreases=false&dropout=0&momentum=0" target="_blank" rel="noopener">Here</a> are the default Playground settings modified so that the regularization rate is a relatively high 0.1.  The net usually isn't able to learn anything with the regularization set this high, and all the weights get zeroed out.  But now try pressing "play" with the <a href="/#activation=tanh&regularization=L2&batchSize=10&dataset=circle&regDataset=reg-plane&learningRate=0.03&regularizationRate=0&noise=0&networkShape=4,2&seed=0.53734&showTestData=false&discretize=false&percTrainData=50&x=true&y=true&xTimesY=false&xSquared=false&ySquared=false&cosX=false&sinX=false&cosY=false&sinY=false&collectStats=false&problem=classification&initZero=false&hideText=false&animationSpeed=100&layerwiseGradientNormalization=0&learningRateAutotuning=-1&preventLossIncreases=false&dropout=0&momentum=0" target="_blank" rel="noopener">default settings</a> unmodified, and adjust the regularization rate to 0.1 once a circle has been learned.  You should get a nice faded circle shape:</p>
+      <p><img src="images/faded-circle-0.5x.png" /></p>
+      <p>Another example: <a href="/#activation=tanh&regularization=L2&batchSize=10&dataset=spiral&regDataset=reg-plane&learningRate=0.03&regularizationRate=0.03&noise=0&networkShape=6,6,6&seed=0.62521&showTestData=false&discretize=false&percTrainData=50&x=true&y=true&xTimesY=false&xSquared=true&ySquared=true&cosX=false&sinX=true&cosY=false&sinY=true&collectStats=false&problem=classification&initZero=false&hideText=false&learningRateAutotuning=-1&preventLossIncreases=false" target="_blank" rel="noopener">These settings</a> usually do an OK job of learning a spiral.  <a href="/#activation=tanh&regularization=L2&batchSize=10&dataset=spiral&regDataset=reg-plane&learningRate=0.03&regularizationRate=0.1&noise=0&networkShape=6,6,6&seed=0.62521&showTestData=false&discretize=false&percTrainData=50&x=true&y=true&xTimesY=false&xSquared=true&ySquared=true&cosX=false&sinX=true&cosY=false&sinY=true&collectStats=false&problem=classification&initZero=false&hideText=false&animationSpeed=100&layerwiseGradientNormalization=0&learningRateAutotuning=-1&preventLossIncreases=false&dropout=0&momentum=0" target="_blank" rel="noopener">Increasing the regularization to 0.1</a> makes it impossible for them to learn anything... unless you increase it to 0.1 after the spiral has already been learned, in which case you get a nice faded spiral shape.</p>
+      <p>"Post-training regularization" is a simple idea, but I think it could be really important.</p>
+      <ul>
+        <li>Copying a fully trained network and doing post-training regularization on each copy could let you quickly try out a variety of regularization parameters.</li>
+        <li>Perturbing inputs just enough to push them across a network's decision boundary is one method for constructing <a href="https://blog.openai.com/adversarial-example-research/">adversarial examples</a>.  This attack is easier if a network has a sharp decision boundary, where a small change in the input can cause a big change in the assigned class.  Post-training regularization could help us make decision boundaries softer and guard against this attack.</li>
+        <li>It's well-known that simple models tend to generalize better than complex ones.  Gradient descent benefits from complexity in some sense, because the more parameters you're optimizing, the less likely that they're all simultaneously stuck in local optima.  So methods to simplify neural nets trained through gradient descent hold promise for improving generalization.  A broad view of "post-training simplification" suggests ideas beyond regularization, like tweaking the loss function to penalize "dissimilarity from the most similar neuron in this layer" to merge neurons together. <a href="#top-controls"><i class="material-icons">arrow_upward</i></a></li>
+      </ul>
+      <p id="animationSpeed-doc"><b>Animation speed</b>: Controls the speed of the animation. <a href="#top-controls"><i class="material-icons">arrow_upward</i></a></p>
+      <p id="dropout-doc"><b>Dropout</b>: Implements <a href="https://www.coursera.org/lecture/deep-neural-network/dropout-regularization-eM33A">inverted dropout</a> for hidden units.  Goodfellow et al <a href="https://www.deeplearningbook.org/contents/regularization.html">suggest</a> using an inclusion probability of 50%, and increasing the size of the model to account for dropped units.</p>
+      <p>To see the network's test time decision boundary, pause the sim and select "Drop 0%".</p>
+      <p>To help you avoid a seizure, the animation speed will automatically slow down when dropout is active.  If you want to crank the speed back up, I suggest first resizing the window so the network is no longer visible. <a href="#top-controls"><i class="material-icons">arrow_upward</i></a></p>
+      <p id="momentum-doc"><b>Momentum</b>: Implements <a href="https://www.coursera.org/lecture/deep-neural-network/gradient-descent-with-momentum-y0m1f">momentum</a>.  The dropdown controls &#x1D6FD;, where velocity = &#x1D6FD; * velocity + (1 - &#x1D6FD;) * gradient.  &#x1D6FD; = 0.9 is a standard setting. <a href="#top-controls"><i class="material-icons">arrow_upward</i></a></p>
+      <p id="layerwise-doc"><b>Layerwise gradient normalization</b>: A major issue that makes training deep neural networks hard is the <a href="https://www.coursera.org/lecture/deep-neural-network/vanishing-exploding-gradients-C9iQO">vanishing gradient problem</a>.  As a case study, observe what happens when we take the default Playground settings and <a href="/#activation=tanh&regularization=L2&batchSize=10&dataset=circle&regDataset=reg-plane&learningRate=0.03&regularizationRate=0&noise=0&networkShape=4,2,2,2,2,2&seed=0.85506&showTestData=false&discretize=false&percTrainData=50&x=true&y=true&xTimesY=false&xSquared=false&ySquared=false&cosX=false&sinX=false&cosY=false&sinY=false&collectStats=false&problem=classification&initZero=false&hideText=false&animationSpeed=100&layerwiseGradientNormalization=0&learningRateAutotuning=-1&preventLossIncreases=false&dropout=0&momentum=0" target="_blank" rel="noopener">add a bunch more layers</a>.  Typically, there's a long period of slow learning before the net finally discovers a circle shape.  Sometimes it never learns a circle at all.</p>
+      <p>My idea for layerwise gradient normalization is motivated by the following metaphor for vanishing gradients.  Imagine the neurons in the network as employees in a corporation.  During forward prop, each neuron takes a linear combination of the work done by its "subordinates" (neurons on the previous layer), applies a nonlinearity, and delivers the result to its "superiors" (neurons on the next layer).  During backprop, a neuron gets feedback in the form of partial derivatives from its "superiors", adjusts its behavior, and passes its own feedback on to "subordinates".</p>
+      <p>A key observation is the circular dependency between the neurons at the top and the neurons at the bottom.  Without knowing the roles of their subordinates, the neurons at the top don't know how to combine their work.  But without knowing the demands of their superiors, the neurons at the bottom don't know what they are supposed to be doing.  To overcome this chicken-and-egg problem, it's ideal for low and high level neurons to learn at roughly the same rate.</p>
+      <p>This gets us to the vanishing gradient issue.  Because the gradient is small for lower-level neurons, they learn slowly.  We can't increase the learning rate for the neural net as a whole... that would cause the neurons at the top to learn faster, and the feedback they deliver their subordinates would no longer be consistent.</p>
+      <p>The solution is to nudge the gradient towards being the same size at each layer.  Layerwise gradient normalization accomplishes this by splitting the gradient into a separate vector for each layer and scaling each vector to unit length.  This allows us to guarantee that each layer of the net is changing at the same rate.</p>
+      <p>In practice, information about how the gradient magnitude differs between layers is still useful&mdash;a gradient with a smaller magnitude indicates less confidence about the correct direction to adjust.  So the dropdown lets you to interpolate between ordinary gradient descent (p = 0) and forcing a unit vector at each layer (p = 1).  This is accomplished by dividing each layer's gradient by its norm taken to the power p before updating weights.</p>
+      <p>To see this in action, observe the example from before with <a href="/#activation=tanh&regularization=L2&batchSize=10&dataset=circle&regDataset=reg-plane&learningRate=0.03&regularizationRate=0&noise=0&networkShape=4,2,2,2,2,2&seed=0.85506&showTestData=false&discretize=false&percTrainData=50&x=true&y=true&xTimesY=false&xSquared=false&ySquared=false&cosX=false&sinX=false&cosY=false&sinY=false&collectStats=false&problem=classification&initZero=false&hideText=false&animationSpeed=100&layerwiseGradientNormalization=0.8&learningRateAutotuning=-1&preventLossIncreases=false&dropout=0&momentum=0" target="_blank" rel="noopener">p = 0.8</a>.  Despite the depth of the network, a circle is quickly learned.  Some of the weights are a bit high because we haven't adjusted the learning rate to account for the rescaled gradient.  To address this, we can reduce the learning rate a bit, or make use of <a href="#regularRate-doc">post-training regularization</a>.</p>
+      <p>Unlike other fixes for vanishing gradients, such as skip connections or ReLU activations, layerwise gradient normalization doesn't restrict the kind of model we learn.  In fact, the corporation metaphor hints at a method for training a much broader range of deep models.  Machine learning researcher Michael I. Jordan <a href="https://www.reddit.com/r/MachineLearning/comments/2fxi6v/ama_michael_i_jordan/ckep3z6/">writes</a>:</p>
+      <blockquote>In other engineering areas, the idea of using pipelines, flow diagrams and layered architectures to build complex systems is quite well entrenched...  I hope and expect to see more people developing architectures that use other kinds of modules and pipelines, not restricting themselves to layers of "neurons".</blockquote>
+      <p>Instead of seeing a neural network as a differentiable function approximator, the corporation metaphor suggests seeing a neural network as a bunch of online learning algorithms, stacked on top of each other &amp; learning in parallel.  In principle, any online learning algorithm that smoothly adapts to new patterns could serve as a "hidden unit".</p>
+      <p>If Jordan is right, and the future brings a broader variety of layered architectures, that could be a very good thing for learning "the correct model" and resisting <a href="https://blog.openai.com/adversarial-example-research/">adversarial examples</a>. <a href="#top-controls"><i class="material-icons">arrow_upward</i></a></p>
+      <p id="learningRateAutotuning-doc"><b>Learning rate autotuning</b>: Goodfellow et al <a href="https://www.deeplearningbook.org/contents/guidelines.html">write</a>:</p>
+      <blockquote>One drawback common to most hyperparameter optimization algorithms with more sophistication than random search is that they require for a training experiment to run to completion before they are able to extract any information from the experiment. This is much less eﬃcient, in the sense of how much information can be gleaned early in an experiment, than manual search by a human practitioner, since one can usually tell early on if some set of hyperparameters is completely pathological.</blockquote>
+      <p>Some recent work has addressed this by computing "hypergradients", i.e. taking the derivative with respect to hyperparameters.  This allows a hyperparameter such as the learning rate to be updated dynamically during optimization.</p>
+      <p>With the learning rate autotuning dropdown, I take a very different approach to dynamic learning rate updates.  Gradient descent is viewed as a <a href="https://en.wikipedia.org/wiki/Multi-armed_bandit">multi-armed bandit problem</a>.  At the beginning of each epoch, there are three actions available: increase the learning rate, decrease the learning rate, or continue with no change.  I track the average relative loss decrease associated with each learning rate, and use <a href="http://www.incompleteideas.net/book/ebook/node17.html">softmax action selection</a> to choose an action.  The dropdown controls &#x1D70F;; larger values correspond to more exploration.  To prevent missteps, the increase learning rate action is only available if the average loss decrease for the current learning rate is favorable. <a href="#top-controls"><i class="material-icons">arrow_upward</i></a></p>
+      <p id="preventLossIncreases-doc"><b>Prevent loss increases</b>: One problem with making the learning rate too high is that we may take a large step which overshoots and actually increases the loss.  The "prevent loss increases" dropdown explores a simple idea for addressing this.  Before each epoch, a snapshot of the neural net gets saved.  Then at the end of the epoch, if the classification loss has increased, we roll back to the snapshot, decrease the learning rate, and try again.  Turning on this option will also turn on learning rate autotuning by default, so the learning rate doesn't just continually ratchet downward. <a href="#top-controls"><i class="material-icons">arrow_upward</i></a></p>
     </div>
 
     <div class="l--body">
       <h2>Credits</h2>
-      <p>
-        This was created by Daniel Smilkov and Shan Carter.
-        This is a continuation of many people’s previous work — most notably Andrej Karpathy’s <a href="http://cs.stanford.edu/people/karpathy/convnetjs/demo/classify2d.html">convnet.js demo</a>
-        and Chris Olah’s <a href="http://colah.github.io/posts/2014-03-NN-Manifolds-Topology/">articles</a> about neural networks.
-        Many thanks also to D. Sculley for help with the original idea and to Fernanda Viégas and Martin Wattenberg and the rest of the
-        <a href="https://research.google.com/bigpicture/">Big Picture</a> and <a href="https://research.google.com/teams/brain/">Google Brain</a> teams for feedback and guidance.
-      </p>
+      <p>Thanks to the folks behind the original <a href="http://playground.tensorflow.org/">TensorFlow Playground</a> site.  The moons dataset was copied from <a href="http://scikit-learn.org/">scikit-learn</a>.  The heart dataset is based on <a href="https://pavpanchekha.com/blog/heart-polar-coordinates.html">this blog post</a> by Pavel Panchekha.</p>
     </div>
   </article>
 

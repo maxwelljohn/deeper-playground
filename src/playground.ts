@@ -500,6 +500,16 @@ function makeGUI() {
     d3.select("div.more").style("display", "none");
     d3.select("header").style("display", "none");
   }
+
+  // Reset url hash when navigating within page.
+  let playgroundDomain = document.domain;
+  d3.selectAll("a").on("click", function() {
+    setTimeout(function() {
+      if (document.domain === playgroundDomain) {
+        state.serialize();
+      }
+    }, 500);
+  });
 }
 
 function updateBiasesUI(network: nn.Node[][]) {
