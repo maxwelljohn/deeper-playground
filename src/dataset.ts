@@ -206,6 +206,7 @@ export function classifyXORData(numSamples: number, noise: number):
 
 export function classifyMoonsData(numSamples: number, noise: number):
     Example2D[] {
+  // Based on https://github.com/scikit-learn/scikit-learn/blob/master/sklearn/datasets/samples_generator.py#L644
   let points: Example2D[] = [];
   for (let i = 0; i < numSamples/2; i++) {
     let selection = randUniform(0, Math.PI);

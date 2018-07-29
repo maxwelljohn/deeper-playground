@@ -98,6 +98,14 @@ export interface RegularizationFunction {
 }
 
 function tanh_to_probability(tanh_output: number): number {
+  // Squash output of tanh to within (0, 1).
+  // (An output of exactly 0 or 1 can cause numerical errors.)
+  // See https://brenocon.com/blog/2013/10/tanh-is-a-rescaled-logistic-sigmoid-function/
+  // Why is this necessary?
+  // The Playground visualization code expects an output in the range (-1, 1).
+  // But log loss expects a probability in the range (0, 1).
+  // So we have to support both use cases.
+  // This was the simplest way to do it.
   return Math.max(
     Math.min((1 + tanh_output) / 2, 0.99999999999999),
     0.00000000000001
@@ -380,6 +388,7 @@ export function backProp(network: Node[][], target: number,
 }
 
 export function createVelocity(network: Node[][]): number[][][] {
+  // Create empty velocity array w/ an entry for every weight in the net.
   let result: number[][][] = [];
   result.push(null);  // Dummy value for input layer
   for (let layerIdx = 1; layerIdx < network.length; layerIdx++) {
