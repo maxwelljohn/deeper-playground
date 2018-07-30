@@ -183,6 +183,7 @@ let player = new Player();
 let lineChart = new AppendingLineChart(d3.select("#linechart"),
     ["#777", "black"]);
 
+// Bookkeeping for learning rate autotuning.
 let learningRates: number[] = d3.selectAll('#learningRate > option')[0].map((opt) => {
   return +d3.select(opt).attr('value');
 });
@@ -362,7 +363,7 @@ function makeGUI() {
   d3.select("#learningRate").on("mousedown", function() {
     if (player.isPlaying && state.learningRateAutotuning !== -1) {
       // Don't let the user modify the learning rate if it's being autotuned.
-      // Attempting this caused UI glitchiness on Chrome.
+      // Attempting this caused UI glitchiness in Chrome.
       if (d3.event instanceof Event) {
         d3.event.preventDefault();
         d3.event.stopPropagation();
